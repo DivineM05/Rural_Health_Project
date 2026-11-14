@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patient Setup</title>
+<style>
+  body { font-family: sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+  label { display: block; margin: 0.5rem 0; font-size: 1.1rem; }
+  input[type=text] { width: 100%; padding: 0.6rem; font-size: 1.1rem; box-sizing: border-box; }
+  button { margin-top: 1rem; padding: 0.8rem 1.2rem; font-size: 1.1rem; }
+  #qr { margin-top: 1.5rem; }
+  #qr img { width: 320px; max-width: 100%; }
+</style>
+</head>
+<body>
+<h1>Patient Setup</h1>
+<h2>Location</h2>
+<input type="text" id="location" placeholder="Village / town / region">
+<h2>Conditions at risk for</h2>
+<div id="conditions"></div>
+<h2>Recurring checkup</h2>
+<label>First checkup date <input type="date" id="startDate"></label>
+<label>Repeat every
+  <input type="number" id="interval" value="1" min="1" style="width:4rem">
+  <select id="unit">
+    <option value="days">days</option>
+    <option value="weeks">weeks</option>
+    <option value="months" selected>months</option>
+    <option value="years">years</option>
+  </select>
+</label>
+<button id="generate">Generate QR code</button>
+<div id="qr"></div>
+<script src="qrcode.min.js"></script>
+<script>
+const conditionOptions = [
+  'Diabetes',
+  'High blood pressure',
+  'Heart disease',
+  'Asthma / COPD',
+  'Pregnancy',
+  'Kidney disease',
+];
+
+const conditionsContainer = document.getElementById('conditions');
+for (const condition of conditionOptions) {
+  const label = document.createElement('label');
+  label.innerHTML = '<input type="checkbox"> ';
+  label.append(condition);
+  label.firstChild.value = condition;
+  conditionsContainer.append(label);
+}
+
+document.getElementById('generate').onclick = () => {
+  const location = document.getElementById('location').value.trim();
+  if (!location) {
+    alert('Enter a location');
+    return;
+  }
+  const startDate = document.getElementById('startDate').value;
+  if (!startDate) {
+    alert('Enter the first checkup date');
+    return;
+  }
+  const checkupSchedule = {
+    startDate,
+    interval: Number(document.getElementById('interval').value),
+    unit: document.getElementById('unit').value,
+  };
+  const conditions = [...conditionsContainer.querySelectorAll('input:checked')].map((box) => box.value);
+  const qr = qrcode(0, 'M');
+  qr.addData(JSON.stringify({ location, conditions, checkupSchedule }));
+  qr.make();
+  document.getElementById('qr').innerHTML = qr.createImgTag(8);
+};
+</script>
+</body>
+</html>

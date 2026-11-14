@@ -3,9 +3,16 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'patientProfile';
 
+export type CheckupSchedule = {
+  startDate: string;
+  interval: number;
+  unit: 'days' | 'weeks' | 'months' | 'years';
+};
+
 export type PatientProfile = {
   location: string;
   conditions: string[];
+  checkupSchedule?: CheckupSchedule;
 };
 
 type ProfileState = {

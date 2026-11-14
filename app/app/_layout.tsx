@@ -63,10 +63,12 @@ function RootLayoutNav() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="checkup-form" options={{ headerShown: true, title: 'Checkup Form' }} />
           <Stack.Screen name="doctor" options={{ headerShown: true, title: 'Doctor' }} />
+          <Stack.Screen name="my-data" options={{ headerShown: true, title: 'My Data' }} />
         </Stack.Protected>
         <Stack.Protected guard={profile === null}>
           <Stack.Screen name="setup" />
         </Stack.Protected>
+        <Stack.Screen name="scan" options={{ headerShown: true, title: 'Scan QR Code' }} />
       </Stack>
       <ResetButton />
     </ThemeProvider>

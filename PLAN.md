@@ -21,3 +21,9 @@ Open: map content (offline tiles needed later), page content
 - Profile saved -> setup never shows again. Root Stack.Protected guard on profile existence.
 - Reset button (top right, all screens) clears profile -> back to setup. Testing only.
 - Files: lib/profile.tsx (context + storage), app/setup.tsx, root layout guard + ResetButton
+
+## QR import
+- webapp/index.html: static form (location, conditions) -> QR of JSON {location, conditions}. Vendored qrcode lib, no build.
+- App: expo-camera scanner at /scan. Setup screen = "Scan QR code" button only. Doctor page also has "Scan QR code" -> same /scan (imports profile).
+- /scan saves profile then router.replace('/').
+- Checkup page: "View my data" -> /my-data (shows location, conditions).
