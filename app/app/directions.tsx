@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PlaceMarker } from '@/components/PlaceMarker';
-import { useColorScheme } from '@/components/useColorScheme';
 import {
   boundsAround,
   fetchRoute,
@@ -20,6 +19,7 @@ import {
   Hospital,
 } from '@/lib/mapData';
 import { useProfile } from '@/lib/profile';
+import { useTheme } from '@/lib/theme';
 
 type Origin = 'home' | 'myLocation';
 
@@ -37,8 +37,8 @@ export default function DirectionsScreen() {
   const params = useLocalSearchParams<{ hospitalIndex: string; mode: TravelMode }>();
   const mode = params.mode;
   const { profile } = useProfile();
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   const [hospital, setHospital] = useState<Hospital | null>(null);
   const [origin, setOrigin] = useState<Origin>('home');
   const [liveStart, setLiveStart] = useState<Place | null>(null);
@@ -126,7 +126,7 @@ export default function DirectionsScreen() {
           <Text style={styles.buttonLabel}>Open in {Platform.OS === 'ios' ? 'Apple Maps' : 'Google Maps'}</Text>
         </Pressable>
         {route.steps.map((step, index) => (
-          <View key={index} style={[styles.step, { borderColor: textColor }]}>
+          <View key={index} style={[styles.step, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <Text style={[styles.instruction, { color: textColor }]}>
               {index + 1}. {step.instruction}
             </Text>

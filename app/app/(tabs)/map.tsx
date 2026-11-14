@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PlaceMarker } from '@/components/PlaceMarker';
-import { useColorScheme } from '@/components/useColorScheme';
 import {
   distanceMetersBetween,
   formatDistance,
@@ -16,11 +15,12 @@ import {
   TravelMode,
 } from '@/lib/mapData';
 import { useProfile } from '@/lib/profile';
+import { useTheme } from '@/lib/theme';
 
 export default function Screen() {
   const { profile } = useProfile();
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   const [mapData, setMapData] = useState<MapData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [canShowUserLocation, setCanShowUserLocation] = useState(false);
@@ -70,7 +70,7 @@ export default function Screen() {
           <Text style={[styles.message, { color: textColor }]}>No hospitals found within 100 km.</Text>
         )}
         {mapData.hospitals.map((hospital, index) => (
-          <View key={index} style={[styles.card, { borderColor: textColor }]}>
+          <View key={index} style={[styles.card, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <Text style={[styles.hospitalName, { color: textColor }]}>{hospital.name}</Text>
             <Text style={[styles.message, { color: textColor }]}>
               {formatDistance(distanceMetersBetween(profile.location, hospital))} from home

@@ -2,12 +2,12 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { CheckupRecord, loadCheckups, RECORD_KIND_DISPLAY } from '@/lib/checkups';
+import { useTheme } from '@/lib/theme';
 
 export default function Screen() {
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   const [checkups, setCheckups] = useState<CheckupRecord[]>([]);
 
   useEffect(() => {

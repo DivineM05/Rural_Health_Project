@@ -3,13 +3,13 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { CheckupRecord, loadCheckups, RECORD_KIND_DISPLAY } from '@/lib/checkups';
+import { useTheme } from '@/lib/theme';
 
 export default function Screen() {
   const { date } = useLocalSearchParams<{ date: string }>();
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   const [checkup, setCheckup] = useState<CheckupRecord | undefined>();
   const [openQuestions, setOpenQuestions] = useState<string[]>([]);
 
@@ -37,7 +37,7 @@ export default function Screen() {
       {checkup.answers.map((each) => {
         const isOpen = openQuestions.includes(each.question);
         return (
-          <View key={each.question} style={[styles.item, { borderColor: textColor }]}>
+          <View key={each.question} style={[styles.item, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <Pressable style={styles.questionRow} onPress={() => toggle(each.question)}>
               <Text style={[styles.question, { color: textColor }]}>{each.question}</Text>
               <MaterialCommunityIcons name={isOpen ? 'chevron-up' : 'chevron-down'} size={28} color={textColor} />

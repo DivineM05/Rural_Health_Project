@@ -16,15 +16,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { checkupQuestionsFor, CheckupQuestion } from '@/lib/checkupQuestions';
 import { heightFromUsUnits, saveCheckup, weightFromPounds } from '@/lib/checkups';
 import { useProfile } from '@/lib/profile';
+import { useTheme } from '@/lib/theme';
 
 type UnitSystem = 'metric' | 'us';
 type Answers = Record<string, string>;
 
 export default function CheckupFormScreen() {
   const { profile } = useProfile();
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? 'white' : 'black';
-  const backgroundColor = isDark ? 'black' : 'white';
+  const theme = useTheme();
+  const textColor = theme.text;
+  const backgroundColor = theme.page;
 
   const questions = useMemo(() => checkupQuestionsFor(profile?.conditions ?? []), [profile]);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -93,7 +94,7 @@ export default function CheckupFormScreen() {
   }
 
   const inputProps = {
-    style: [styles.input, { color: textColor, borderColor: textColor }],
+    style: [styles.input, { color: textColor, borderColor: theme.border, backgroundColor: theme.card }],
     placeholderTextColor: '#888',
   };
 

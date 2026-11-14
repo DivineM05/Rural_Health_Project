@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet, Text } from 'react-native';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { describeSchedule, nextCheckupDate } from '@/lib/checkupSchedule';
 import { useProfile } from '@/lib/profile';
+import { useTheme } from '@/lib/theme';
 
 export default function Screen() {
   const { profile } = useProfile();
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   if (!profile) return null;
 
   return (

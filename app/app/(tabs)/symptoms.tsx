@@ -3,12 +3,12 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { searchSymptoms, symptomLabel } from '@/lib/symptomChecker';
+import { useTheme } from '@/lib/theme';
 
 export default function Screen() {
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   const [query, setQuery] = useState('');
   const [selectedSymptomIds, setSelectedSymptomIds] = useState<string[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -43,7 +43,7 @@ export default function Screen() {
 
       <Text style={[styles.heading, { color: textColor }]}>What symptoms do you have?</Text>
       <TextInput
-        style={[styles.input, { color: textColor, borderColor: textColor }]}
+        style={[styles.input, { color: textColor, borderColor: theme.border, backgroundColor: theme.card }]}
         placeholder="Search symptoms, e.g. headache"
         placeholderTextColor="#888"
         value={query}
@@ -57,7 +57,7 @@ export default function Screen() {
       {suggestions.map((symptom) => (
         <Pressable
           key={symptom.id}
-          style={({ pressed }) => [styles.suggestion, { borderColor: textColor }, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.suggestion, { borderColor: theme.border, backgroundColor: theme.card }, pressed && styles.pressed]}
           onPress={() => addSymptom(symptom.id)}>
           <MaterialCommunityIcons name="plus" size={24} color={textColor} />
           <Text style={[styles.symptomText, { color: textColor }]}>{symptom.label}</Text>

@@ -3,9 +3,9 @@ import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { downloadMapData } from '@/lib/mapData';
 import { PatientProfile, useProfile } from '@/lib/profile';
+import { useTheme } from '@/lib/theme';
 
 function parseProfile(qrText: string): PatientProfile | null {
   try {
@@ -24,8 +24,8 @@ function parseProfile(qrText: string): PatientProfile | null {
 
 export default function ScanScreen() {
   const { saveProfile } = useProfile();
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
+  const theme = useTheme();
+  const textColor = theme.text;
   const [permission, requestPermission] = useCameraPermissions();
   const [errorMessage, setErrorMessage] = useState('');
   const [scannedProfile, setScannedProfile] = useState<PatientProfile | null>(null);

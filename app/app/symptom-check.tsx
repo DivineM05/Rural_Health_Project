@@ -5,7 +5,6 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UrgencyScale } from '@/components/UrgencyScale';
-import { useColorScheme } from '@/components/useColorScheme';
 import { saveCheckup } from '@/lib/checkups';
 import { useProfile } from '@/lib/profile';
 import {
@@ -20,6 +19,7 @@ import {
   urgencyFor,
   UrgencyLevel,
 } from '@/lib/symptomChecker';
+import { useTheme } from '@/lib/theme';
 
 const MAX_QUESTIONS = 10;
 const ANSWER_TEXT: Record<SymptomAnswer, string> = { yes: 'Yes', no: 'No', unsure: 'Not sure' };
@@ -31,9 +31,9 @@ export default function SymptomCheckScreen() {
   const reportedSymptomIds = params.symptoms.split(',');
   const { profile } = useProfile();
   const conditions = profile?.conditions ?? [];
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? 'white' : 'black';
-  const backgroundColor = isDark ? 'black' : 'white';
+  const theme = useTheme();
+  const textColor = theme.text;
+  const backgroundColor = theme.page;
 
   const [answers, setAnswers] = useState<SymptomAnswers>(() =>
     Object.fromEntries(reportedSymptomIds.map((symptomId) => [symptomId, 'yes'])),
@@ -168,7 +168,7 @@ export default function SymptomCheckScreen() {
             should check what is really wrong.
           </Text>
           {result.causes.map((cause) => (
-            <View key={cause.illness.name} style={[styles.cause, { borderColor: textColor }]}>
+            <View key={cause.illness.name} style={[styles.cause, { borderColor: theme.border, backgroundColor: theme.card }]}>
               <Text style={[styles.causeName, { color: textColor }]}>
                 {cause.illness.name}: {Math.round(cause.probability * 100)}%
               </Text>

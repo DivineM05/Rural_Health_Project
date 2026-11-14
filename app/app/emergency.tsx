@@ -1,17 +1,18 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveCheckup } from '@/lib/checkups';
 import { emergencyQuestions } from '@/lib/emergencyQuestions';
+import { useTheme } from '@/lib/theme';
 
 type Result = 'none' | 'emergency' | 'no-signs';
 
 export default function EmergencyScreen() {
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? 'white' : 'black';
-  const backgroundColor = isDark ? 'black' : 'white';
+  const theme = useTheme();
+  const textColor = theme.text;
+  const backgroundColor = theme.page;
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [result, setResult] = useState<Result>('none');

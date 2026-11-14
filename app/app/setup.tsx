@@ -1,12 +1,12 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/lib/theme';
 
-import { useColorScheme } from '@/components/useColorScheme';
 
 export default function SetupScreen() {
-  const isDark = useColorScheme() === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
-  const backgroundColor = isDark ? '#000000' : '#ffffff';
+  const theme = useTheme();
+  const textColor = theme.text;
+  const backgroundColor = theme.page;
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
