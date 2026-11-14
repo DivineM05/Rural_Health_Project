@@ -61,9 +61,11 @@ function RootLayoutNav() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={profile !== null}>
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="checkup-form" />
+          <Stack.Screen name="checkup-form" options={{ gestureEnabled: false }} />
           <Stack.Screen name="doctor" options={{ headerShown: true, title: 'Doctor' }} />
           <Stack.Screen name="my-data" options={{ headerShown: true, title: 'My Data' }} />
+          <Stack.Screen name="setup-info" options={{ headerShown: true, title: 'Info From My Doctor' }} />
+          <Stack.Screen name="checkup-detail" options={{ headerShown: true, title: 'Checkup' }} />
           <Stack.Screen name="emergency" />
         </Stack.Protected>
         <Stack.Protected guard={profile === null}>

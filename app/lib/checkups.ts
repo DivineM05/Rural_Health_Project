@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const CHECKUP_HISTORY_KEY = 'checkupHistory';
 
 export type CheckupRecord = {
+  kind: 'checkup' | 'emergency';
   date: string;
   answers: { question: string; answer: string }[];
 };

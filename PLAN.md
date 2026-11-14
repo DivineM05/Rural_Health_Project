@@ -37,4 +37,6 @@ Open: map content (offline tiles needed later), page content
 - /checkup-form: one question at a time, back arrow, every question has "Skip / I don't know".
 - Questions in lib/checkupQuestions.ts: general intake (feeling, height, weight, fever, new problems, pain, medicines, clinic visits, falls, sleep, PHQ-2 mood, activity, tobacco, alcohol) + extra per profile condition.
 - Height/weight: Metric/US toggle; US converted to metric with original kept, e.g. "170 cm (5 ft 7 in)".
-- On finish: saved to AsyncStorage 'checkupHistory' (lib/checkups.ts). My Data lists past checkups. Reset clears it too.
+- On finish: saved to AsyncStorage 'checkupHistory' (lib/checkups.ts). Reset clears it too.
+- My Data: green "Info from my doctor" button (/setup-info: location, schedule, conditions) on top, then one blue button per checkup, newest first (/checkup-detail?date=).
+- Emergencies: a "Yes" in /emergency saves a record (kind 'emergency', the Yes answer first, then the No answers) to the same history. My Data shows them as red buttons; checkups stay blue.

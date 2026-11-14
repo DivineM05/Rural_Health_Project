@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
@@ -34,12 +35,15 @@ export default function CheckupFormScreen() {
 
   const question = questions[questionIndex];
 
-  function goBack() {
+  function confirmLeave() {
+    Alert.alert('Leave checkup?', 'Your answers will not be saved.', [
+      { text: 'Stay', style: 'cancel' },
+      { text: 'Leave', style: 'destructive', onPress: () => router.back() },
+    ]);
+  }
+
+  function goToPreviousQuestion() {
     setFields({});
-    if (questionIndex === 0) {
-      router.back();
-      return;
-    }
     setQuestionIndex(questionIndex - 1);
   }
 
@@ -53,6 +57,7 @@ export default function CheckupFormScreen() {
     }
     const answeredQuestions = questions.filter((each) => newAnswers[each.id] !== undefined);
     await saveCheckup({
+      kind: 'checkup',
       date: new Date().toISOString(),
       answers: answeredQuestions.map((each) => ({ question: each.question, answer: newAnswers[each.id] })),
     });
@@ -214,9 +219,16 @@ export default function CheckupFormScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <Pressable style={styles.backButton} onPress={goBack} accessibilityLabel="Back">
-        <MaterialCommunityIcons name="arrow-left" size={36} color={textColor} />
-      </Pressable>
+      <View style={styles.row}>
+        <Pressable style={styles.iconButton} onPress={confirmLeave} accessibilityLabel="Leave checkup">
+          <MaterialCommunityIcons name="close" size={36} color={textColor} />
+        </Pressable>
+        {questionIndex > 0 && (
+          <Pressable style={styles.iconButton} onPress={goToPreviousQuestion} accessibilityLabel="Previous question">
+            <MaterialCommunityIcons name="arrow-left" size={36} color={textColor} />
+          </Pressable>
+        )}
+      </View>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
           <Text style={[styles.progress, { color: textColor }]}>
@@ -235,7 +247,7 @@ export default function CheckupFormScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 8 },
-  backButton: { alignSelf: 'flex-start', padding: 8 },
+  iconButton: { padding: 8 },
   body: { flexGrow: 1, justifyContent: 'center', gap: 16, padding: 8 },
   progress: { fontSize: 16, textAlign: 'center' },
   question: { fontSize: 26, fontWeight: '700', textAlign: 'center' },

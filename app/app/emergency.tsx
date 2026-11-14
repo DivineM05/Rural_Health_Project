@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { saveCheckup } from '@/lib/checkups';
 import { emergencyQuestions } from '@/lib/emergencyQuestions';
 
 type Result = 'none' | 'emergency' | 'no-signs';
@@ -30,6 +31,12 @@ export default function EmergencyScreen() {
   }
 
   function answerYes() {
+    const noAnswers = emergencyQuestions.slice(0, questionIndex).map((each) => ({
+      question: each.question,
+      answer: 'No',
+    }));
+    const yesAnswer = { question: emergencyQuestions[questionIndex].question, answer: 'Yes' };
+    saveCheckup({ kind: 'emergency', date: new Date().toISOString(), answers: [yesAnswer, ...noAnswers] });
     setResult('emergency');
   }
 
