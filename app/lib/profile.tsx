@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CHECKUP_HISTORY_KEY } from '@/lib/checkups';
+import { deleteMapData, Place } from '@/lib/mapData';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'patientProfile';
@@ -11,7 +12,7 @@ export type CheckupSchedule = {
 };
 
 export type PatientProfile = {
-  location: string;
+  location: Place;
   conditions: string[];
   checkupSchedule?: CheckupSchedule;
 };
@@ -44,6 +45,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   async function resetProfile() {
     await AsyncStorage.removeItem(STORAGE_KEY);
     await AsyncStorage.removeItem(CHECKUP_HISTORY_KEY);
+    await deleteMapData();
     setProfile(null);
   }
 

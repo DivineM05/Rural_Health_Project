@@ -12,7 +12,7 @@ export default function Screen() {
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.container}>
-      <Text style={[styles.value, { color: textColor }]}>Location: {profile.location}</Text>
+      <Text style={[styles.value, { color: textColor }]}>Location: {profile.location.name}</Text>
       {profile.checkupSchedule && (
         <Text style={[styles.value, { color: textColor }]}>
           Checkups: {describeSchedule(profile.checkupSchedule)}, next{' '}

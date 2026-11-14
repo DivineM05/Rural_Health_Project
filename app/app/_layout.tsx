@@ -67,6 +67,7 @@ function RootLayoutNav() {
           <Stack.Screen name="setup-info" options={{ headerShown: true, title: 'Info From My Doctor' }} />
           <Stack.Screen name="checkup-detail" options={{ headerShown: true, title: 'Checkup' }} />
           <Stack.Screen name="emergency" />
+          <Stack.Screen name="directions" options={{ headerShown: true, title: 'Directions' }} />
         </Stack.Protected>
         <Stack.Protected guard={profile === null}>
           <Stack.Screen name="setup" />
