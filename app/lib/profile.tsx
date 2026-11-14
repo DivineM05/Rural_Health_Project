@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CHECKUP_HISTORY_KEY } from '@/lib/checkups';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'patientProfile';
@@ -42,6 +43,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   async function resetProfile() {
     await AsyncStorage.removeItem(STORAGE_KEY);
+    await AsyncStorage.removeItem(CHECKUP_HISTORY_KEY);
     setProfile(null);
   }
 
