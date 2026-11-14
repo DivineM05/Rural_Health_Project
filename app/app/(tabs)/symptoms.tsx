@@ -11,6 +11,7 @@ export default function Screen() {
   const textColor = isDark ? '#ffffff' : '#000000';
   const [query, setQuery] = useState('');
   const [selectedSymptomIds, setSelectedSymptomIds] = useState<string[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const suggestions = query.trim() === '' ? [] : searchSymptoms(query, selectedSymptomIds);
 
@@ -32,11 +33,13 @@ export default function Screen() {
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag">
-      <Pressable
-        style={({ pressed }) => [styles.emergencyButton, pressed && styles.pressed]}
-        onPress={() => router.push('/emergency')}>
-        <Text style={styles.emergencyLabel}>I think I'm having an emergency</Text>
-      </Pressable>
+      {!isSearching && (
+        <Pressable
+          style={({ pressed }) => [styles.emergencyButton, pressed && styles.pressed]}
+          onPress={() => router.push('/emergency')}>
+          <Text style={styles.emergencyLabel}>I think I'm having an emergency</Text>
+        </Pressable>
+      )}
 
       <Text style={[styles.heading, { color: textColor }]}>What symptoms do you have?</Text>
       <TextInput
@@ -45,6 +48,8 @@ export default function Screen() {
         placeholderTextColor="#888"
         value={query}
         onChangeText={setQuery}
+        onFocus={() => setIsSearching(true)}
+        onBlur={() => setIsSearching(false)}
         autoCorrect={false}
         returnKeyType="done"
         clearButtonMode="while-editing"

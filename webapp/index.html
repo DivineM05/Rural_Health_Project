@@ -6,39 +6,142 @@
 <title>Patient Setup</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css">
 <style>
-  body { font-family: sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
-  label { display: block; margin: 0.5rem 0; font-size: 1.1rem; }
-  input[type=text] { width: 100%; padding: 0.6rem; font-size: 1.1rem; box-sizing: border-box; }
-  button { margin-top: 1rem; padding: 0.8rem 1.2rem; font-size: 1.1rem; }
-  #map { height: 320px; margin-top: 0.5rem; }
-  #results button { display: block; width: 100%; margin-top: 0.3rem; text-align: left; font-size: 0.95rem; }
-  #qr { margin-top: 1.5rem; }
-  #qr img { width: 320px; max-width: 100%; }
+  :root {
+    color-scheme: light dark;
+    --accent: #0a7ea4;
+    --accent-dark: #086a8a;
+    --page: #f3f6f8;
+    --card: #ffffff;
+    --text: #1b2329;
+    --muted: #5f6b73;
+    --border: #d9e1e6;
+    --chip: #eef4f7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #12171b;
+      --card: #1c2329;
+      --text: #e8eef2;
+      --muted: #9aa7b0;
+      --border: #313b43;
+      --chip: #253039;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--accent); color: white; padding: 1.5rem 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 0.25rem 0 0; opacity: 0.9; }
+  main { max-width: 640px; margin: 0 auto; padding: 1rem; display: grid; gap: 1rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+  }
+  .card h2 { margin: 0 0 0.75rem; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem; }
+  .step {
+    display: inline-grid; place-items: center;
+    width: 1.6rem; height: 1.6rem; border-radius: 50%;
+    background: var(--accent); color: white; font-size: 0.9rem;
+  }
+  .hint { color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 0; }
+  input[type=text], input[type=date], input[type=number], select {
+    font: inherit; color: var(--text); background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; padding: 0.6rem 0.75rem;
+  }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    border: none; border-radius: 10px; padding: 0.65rem 1.1rem;
+    background: var(--accent); color: white;
+  }
+  button:hover { background: var(--accent-dark); }
+  .search-row { display: flex; gap: 0.5rem; }
+  .search-row input { flex: 1; min-width: 0; }
+  #results { display: grid; gap: 0.35rem; margin-top: 0.5rem; }
+  #results:empty { display: none; }
+  #results button {
+    background: var(--chip); color: var(--text); font-weight: 400;
+    text-align: left; font-size: 0.9rem;
+  }
+  #results button:hover { background: var(--border); }
+  #map { height: 320px; border-radius: 10px; margin-top: 0.75rem; overflow: hidden; }
+  #selected { color: var(--text); }
+  #conditions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  #conditions label {
+    display: flex; align-items: center; gap: 0.4rem; cursor: pointer;
+    background: var(--chip); border: 1px solid var(--border);
+    border-radius: 999px; padding: 0.4rem 0.85rem;
+  }
+  #conditions label:has(input:checked) { background: var(--accent); border-color: var(--accent); color: white; }
+  #conditions input { accent-color: white; margin: 0; }
+  .fields { display: grid; gap: 0.75rem; }
+  .fields label { display: grid; gap: 0.3rem; font-weight: 600; font-size: 0.95rem; }
+  .repeat { display: flex; gap: 0.5rem; }
+  .repeat input { width: 5rem; }
+  #generate { width: 100%; padding: 0.9rem; font-size: 1.1rem; }
+  #qr { display: grid; justify-items: center; gap: 0.5rem; }
+  #qr:empty { display: none; }
+  #qr img { width: 300px; max-width: 100%; background: white; padding: 12px; border-radius: 10px; }
 </style>
 </head>
 <body>
-<h1>Patient Setup</h1>
-<h2>Location</h2>
-<input type="text" id="search" placeholder="Search for a village, town or address">
-<button id="searchButton">Search</button>
-<div id="results"></div>
-<div id="map"></div>
-<p>Tap the map or drag the pin to adjust. Selected: <strong id="selected">none</strong></p>
-<h2>Conditions at risk for</h2>
-<div id="conditions"></div>
-<h2>Recurring checkup</h2>
-<label>First checkup date <input type="date" id="startDate"></label>
-<label>Repeat every
-  <input type="number" id="interval" value="1" min="1" style="width:4rem">
-  <select id="unit">
-    <option value="days">days</option>
-    <option value="weeks">weeks</option>
-    <option value="months" selected>months</option>
-    <option value="years">years</option>
-  </select>
-</label>
-<button id="generate">Generate QR code</button>
-<div id="qr"></div>
+<header>
+  <h1>Patient Setup</h1>
+  <p>Fill this in with the patient, then scan the QR code with their phone.</p>
+</header>
+<main>
+  <section class="card">
+    <h2><span class="step">1</span> Location</h2>
+    <div class="search-row">
+      <input type="text" id="search" placeholder="Village, town or address">
+      <button id="searchButton">Search</button>
+    </div>
+    <div id="results"></div>
+    <div id="map"></div>
+    <p class="hint">Tap the map or drag the pin to adjust. Selected: <strong id="selected">none</strong></p>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">2</span> Conditions at risk for</h2>
+    <div id="conditions"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">3</span> Recurring checkup</h2>
+    <div class="fields">
+      <label>First checkup date <input type="date" id="startDate"></label>
+      <label>Repeat every
+        <span class="repeat">
+          <input type="number" id="interval" value="1" min="1">
+          <select id="unit">
+            <option value="days">days</option>
+            <option value="weeks">weeks</option>
+            <option value="months" selected>months</option>
+            <option value="years">years</option>
+          </select>
+        </span>
+      </label>
+    </div>
+  </section>
+
+  <button id="generate">Generate QR code</button>
+  <section class="card" id="qrCard" hidden>
+    <h2><span class="step">4</span> Scan with the patient's phone</h2>
+    <div id="qr"></div>
+    <p class="hint">The phone needs internet while scanning to download the offline map.</p>
+  </section>
+</main>
 <script src="qrcode.min.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script>
@@ -72,6 +175,10 @@ function selectLocation(name, latitude, longitude) {
 map.on('click', (event) => {
   const name = selectedLocation ? selectedLocation.name : 'Pinned location';
   selectLocation(name, event.lngLat.lat, event.lngLat.lng);
+});
+
+document.getElementById('search').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') document.getElementById('searchButton').click();
 });
 
 document.getElementById('searchButton').onclick = async () => {
@@ -135,6 +242,8 @@ document.getElementById('generate').onclick = () => {
   qr.addData(JSON.stringify({ location, conditions, checkupSchedule }));
   qr.make();
   document.getElementById('qr').innerHTML = qr.createImgTag(8);
+  document.getElementById('qrCard').hidden = false;
+  document.getElementById('qrCard').scrollIntoView({ behavior: 'smooth' });
 };
 </script>
 </body>
