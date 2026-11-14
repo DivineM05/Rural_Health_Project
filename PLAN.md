@@ -67,3 +67,20 @@ Steps
 4. Map tab + directions screen.
 5. Live GPS route when online.
 6. setup-info shows location name.
+
+## Symptom checker
+Problem: patient picks symptoms; app asks follow-up yes/no questions, then shows top 3 possible causes (not a diagnosis) and how urgently to get care, all offline.
+
+Design
+- Data: open Kaggle "Disease Symptom Prediction" dataset (itachi9604; GitHub itachi9604/healthcare-chatbot): 41 illnesses, 132 symptoms, symptom severity weights, illness descriptions.
+  - scripts/build_symptom_data.py downloads the CSVs, writes app/lib/symptomData.json: symptoms {id, label, severity}, illnesses {name, description, symptoms: {id: frequency}}. Plain-language label overrides live in the script.
+  - Hand-written, in lib/symptomChecker.ts with sources: urgency level per illness, red-flag symptoms, at-risk condition -> illness boosts.
+- Symptoms tab: emergency button stays on top. Search box (Fuse.js fuzzy) shows up to 6 suggestions while typing; tap adds to "My symptoms" list (each removable). "Start questions" -> /symptom-check?symptoms=a,b.
+- /symptom-check: one question at a time like checkup (X confirms leaving, back arrow). Yes / No / gray "I'm not sure".
+  - Next question: unasked symptom among the top 5 candidates that best splits them (closest to half of their score). Stop after 10 questions or when nothing left to ask.
+  - Match strength per illness = matched / (matched + denied + reported-but-not-in-illness + 0.5 * unasked); weights = how rare the symptom is across illnesses. At-risk conditions multiply mapped illnesses by 1.5.
+- Urgency (5 steps, shown as a colored scale with a marker): 1 self-care, 2 clinic in a few days, 3 doctor within 24 h, 4 hospital today, 5 hospital now.
+  - = highest urgency among top 3 causes scoring at least half the top score; red-flag symptoms force 4 or 5; pregnancy adds 1.
+  - Level 4+: "Find the nearest hospital" -> map. Level 5: also "I think I'm having an emergency".
+- Result saved to history as kind 'symptoms' (orange in My Data).
+- Test: scripts/test-symptom-checker.ts via `npx tsx` with sample cases (cold, heart attack, UTI).

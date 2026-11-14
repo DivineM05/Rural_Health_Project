@@ -2,8 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const CHECKUP_HISTORY_KEY = 'checkupHistory';
 
+export type RecordKind = 'checkup' | 'emergency' | 'symptoms';
+
+export const RECORD_KIND_DISPLAY: Record<RecordKind, { title: string; color: string }> = {
+  checkup: { title: 'Checkup', color: '#0a7ea4' },
+  emergency: { title: 'Emergency', color: '#d32f2f' },
+  symptoms: { title: 'Symptom check', color: '#ef6c00' },
+};
+
 export type CheckupRecord = {
-  kind: 'checkup' | 'emergency';
+  kind: RecordKind;
   date: string;
   answers: { question: string; answer: string }[];
 };

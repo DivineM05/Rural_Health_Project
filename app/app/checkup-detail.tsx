@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useColorScheme } from '@/components/useColorScheme';
-import { CheckupRecord, loadCheckups } from '@/lib/checkups';
+import { CheckupRecord, loadCheckups, RECORD_KIND_DISPLAY } from '@/lib/checkups';
 
 export default function Screen() {
   const { date } = useLocalSearchParams<{ date: string }>();
@@ -29,8 +29,8 @@ export default function Screen() {
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.container}>
-      <Stack.Screen options={{ title: checkup.kind === 'emergency' ? 'Emergency' : 'Checkup' }} />
-      <Text style={[styles.heading, { color: checkup.kind === 'emergency' ? '#d32f2f' : textColor }]}>
+      <Stack.Screen options={{ title: RECORD_KIND_DISPLAY[checkup.kind].title }} />
+      <Text style={[styles.heading, { color: checkup.kind === 'checkup' ? textColor : RECORD_KIND_DISPLAY[checkup.kind].color }]}>
         {new Date(checkup.date).toLocaleString()}
       </Text>
       {checkup.answers.length === 0 && <Text style={[styles.answer, { color: textColor }]}>All questions skipped</Text>}

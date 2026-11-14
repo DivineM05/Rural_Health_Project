@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
 import { useColorScheme } from '@/components/useColorScheme';
-import { CheckupRecord, loadCheckups } from '@/lib/checkups';
+import { CheckupRecord, loadCheckups, RECORD_KIND_DISPLAY } from '@/lib/checkups';
 
 export default function Screen() {
   const isDark = useColorScheme() === 'dark';
@@ -29,12 +29,12 @@ export default function Screen() {
           key={checkup.date}
           style={({ pressed }) => [
             styles.button,
-            checkup.kind === 'emergency' ? styles.emergencyButton : styles.checkupButton,
+            { backgroundColor: RECORD_KIND_DISPLAY[checkup.kind].color },
             pressed && styles.pressed,
           ]}
           onPress={() => router.push({ pathname: '/checkup-detail', params: { date: checkup.date } })}>
           <Text style={styles.buttonLabel}>
-            {checkup.kind === 'emergency' ? 'Emergency' : 'Checkup'}: {new Date(checkup.date).toLocaleString()}
+            {RECORD_KIND_DISPLAY[checkup.kind].title}: {new Date(checkup.date).toLocaleString()}
           </Text>
         </Pressable>
       ))}
@@ -48,8 +48,6 @@ const styles = StyleSheet.create({
   value: { fontSize: 20 },
   button: { borderRadius: 20, paddingVertical: 20, paddingHorizontal: 16, alignItems: 'center' },
   setupButton: { backgroundColor: '#2e7d32' },
-  checkupButton: { backgroundColor: '#0a7ea4' },
-  emergencyButton: { backgroundColor: '#d32f2f' },
   buttonLabel: { color: 'white', fontSize: 20, fontWeight: '700' },
   pressed: { opacity: 0.7 },
 });

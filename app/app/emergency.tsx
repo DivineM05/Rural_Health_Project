@@ -112,6 +112,12 @@ export default function EmergencyScreen() {
             This may be an emergency. Call emergency services or go to the nearest clinic or
             hospital right away. Ask someone nearby to help you.
           </Text>
+          <Pressable
+            style={({ pressed }) => [styles.mapButton, pressed && styles.pressed]}
+            onPress={() => router.dismissTo('/map')}>
+            <MaterialCommunityIcons name="hospital-box" size={28} color="white" />
+            <Text style={styles.unsureLabel}>Find the nearest hospital</Text>
+          </Pressable>
         </View>
       )}
 
@@ -146,4 +152,13 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.7 },
   resultTitle: { fontSize: 32, fontWeight: '700', textAlign: 'center' },
   resultText: { fontSize: 20, textAlign: 'center' },
+  mapButton: {
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#d32f2f',
+    borderRadius: 24,
+    paddingVertical: 20,
+  },
 });
