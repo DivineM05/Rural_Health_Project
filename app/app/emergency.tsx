@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveCheckup } from '@/lib/checkups';
 import { emergencyQuestions } from '@/lib/emergencyQuestions';
@@ -17,18 +17,27 @@ export default function EmergencyScreen() {
   const [result, setResult] = useState<Result>('none');
   const [isShowingMoreInformation, setIsShowingMoreInformation] = useState(false);
 
+  function confirmLeave() {
+    if (result !== 'none') {
+      router.back();
+      return;
+    }
+    Alert.alert('Leave emergency questions?', undefined, [
+      { text: 'Stay', style: 'cancel' },
+      { text: 'Leave', style: 'destructive', onPress: () => router.back() },
+    ]);
+  }
+
   function goBack() {
     setIsShowingMoreInformation(false);
     if (result !== 'none') {
       setResult('none');
       return;
     }
-    if (questionIndex === 0) {
-      router.back();
-      return;
-    }
     setQuestionIndex(questionIndex - 1);
   }
+
+  const canGoBack = result !== 'none' || questionIndex > 0;
 
   function answerYes() {
     const noAnswers = emergencyQuestions.slice(0, questionIndex).map((each) => ({
@@ -52,9 +61,16 @@ export default function EmergencyScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <Pressable style={styles.backButton} onPress={goBack} accessibilityLabel="Back">
-        <MaterialCommunityIcons name="arrow-left" size={36} color={textColor} />
-      </Pressable>
+      <View style={styles.topRow}>
+        <Pressable style={styles.iconButton} onPress={confirmLeave} accessibilityLabel="Leave">
+          <MaterialCommunityIcons name="close" size={36} color={textColor} />
+        </Pressable>
+        {canGoBack && (
+          <Pressable style={styles.iconButton} onPress={goBack} accessibilityLabel="Back">
+            <MaterialCommunityIcons name="arrow-left" size={36} color={textColor} />
+          </Pressable>
+        )}
+      </View>
 
       {result === 'none' && (
         <View style={styles.body}>
@@ -114,7 +130,8 @@ export default function EmergencyScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  backButton: { alignSelf: 'flex-start', padding: 8 },
+  topRow: { flexDirection: 'row', gap: 12 },
+  iconButton: { padding: 8 },
   body: { flex: 1, justifyContent: 'center', gap: 24 },
   progress: { fontSize: 16, textAlign: 'center' },
   question: { fontSize: 28, fontWeight: '700', textAlign: 'center' },

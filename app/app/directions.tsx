@@ -2,7 +2,7 @@ import { Camera, GeoJSONSource, Layer, Map as MapView, UserLocation } from '@map
 import * as Location from 'expo-location';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PlaceMarker } from '@/components/PlaceMarker';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -22,6 +22,16 @@ import {
 import { useProfile } from '@/lib/profile';
 
 type Origin = 'home' | 'myLocation';
+
+function mapAppUrl(start: Place | null, destination: Place, mode: TravelMode): string {
+  const destinationText = `${destination.latitude},${destination.longitude}`;
+  if (Platform.OS === 'ios') {
+    const startParameter = start ? `&saddr=${start.latitude},${start.longitude}` : '';
+    return `http://maps.apple.com/?daddr=${destinationText}${startParameter}&dirflg=${mode === 'driving' ? 'd' : 'w'}`;
+  }
+  const startParameter = start ? `&origin=${start.latitude},${start.longitude}` : '';
+  return `https://www.google.com/maps/dir/?api=1&destination=${destinationText}${startParameter}&travelmode=${mode}`;
+}
 
 export default function DirectionsScreen() {
   const params = useLocalSearchParams<{ hospitalIndex: string; mode: TravelMode }>();
@@ -110,6 +120,11 @@ export default function DirectionsScreen() {
         <Text style={[styles.summary, { color: textColor }]}>
           {formatDistance(route.distanceMeters)}, about {formatDuration(route.durationSeconds)}
         </Text>
+        <Pressable
+          style={({ pressed }) => [styles.mapAppButton, pressed && styles.pressed]}
+          onPress={() => Linking.openURL(mapAppUrl(isFromMyLocation ? null : profile.location, hospital, mode))}>
+          <Text style={styles.buttonLabel}>Open in {Platform.OS === 'ios' ? 'Apple Maps' : 'Google Maps'}</Text>
+        </Pressable>
         {route.steps.map((step, index) => (
           <View key={index} style={[styles.step, { borderColor: textColor }]}>
             <Text style={[styles.instruction, { color: textColor }]}>
@@ -135,6 +150,8 @@ const styles = StyleSheet.create({
   buttonLabel: { color: 'white', fontSize: 18, fontWeight: '700' },
   error: { color: '#d32f2f', fontSize: 18 },
   summary: { fontSize: 20, fontWeight: '700' },
+  mapAppButton: { backgroundColor: '#2e7d32', borderRadius: 16, paddingVertical: 14, alignItems: 'center' },
+  pressed: { opacity: 0.7 },
   step: { borderBottomWidth: StyleSheet.hairlineWidth, paddingBottom: 8 },
   instruction: { fontSize: 18 },
   stepDistance: { fontSize: 16, opacity: 0.7 },

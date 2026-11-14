@@ -55,6 +55,7 @@ Design
 - Directions screen: route line on map + step list + distance/time.
   - "From: Home" uses saved route (offline).
   - "From: My location" fetches a live OSRM route from GPS; if the fetch fails, says "Needs internet" and stays on Home.
+- Directions screen: green "Open in Apple Maps / Google Maps" button (needs internet in that app). From home passes home as start; from my location lets the map app use GPS.
 - Bus dropped (no reliable rural transit data).
 - Reset also clears 'mapData' and offline packs.
 - Requires dev build (`npx expo run:ios`), not Expo Go.
